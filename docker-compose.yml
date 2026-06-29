@@ -1,0 +1,21 @@
+services:
+  birefnet:
+    build: .
+    container_name: birefnet-service
+    ports:
+      - "8000:8000"
+    volumes:
+      # кэшируем веса модели между перезапусками, чтобы не качать заново
+      - hf_cache:/cache/huggingface
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+volumes:
+  hf_cache:
